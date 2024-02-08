@@ -29,13 +29,13 @@
   tags: instance
   import_playbook: create_instances.yml
 
-- name: pause
+- name: Pause For Hosts to Startup
   hosts: localhost
   tags: instance
   tasks:
-    - name: pause for 3 min
+    - name: pause for 7 min
       pause:
-        minutes: 3
+        minutes: 7
 # Copy playbook / roles into infra dir
 # Each playbook file can decide how to interact w/ hosts and how to set thingup
 # Just need to make sure each playbook uses vars in the host file
@@ -43,13 +43,18 @@
   tags: service
   import_playbook: new_domain_controller.yml
 
-    #- name: add AD Users
-    #tags: users
-    #import_playbook: create_users.yml 
+- name: add AD Users
+  tags: service 
+  import_playbook: create_users.yml 
 
 - name: add Local Windows Users
-  tags: users
+  tags: smb
   import_playbook: create_local_users.yml
+
+- name: Smb Creation
+  tags: smb 
+  import_playbook: deploy_smb.yml
+
 # EXAMPLE
 #- name: Setup Service 0
 #  tags: service
@@ -60,6 +65,6 @@
 #  import_playbook: [service playbook file]
 
 # tags allow for certain tasks to be run ie
-# Setup ENTIRE infra:             ansible-playbook -i <inventory> --tags router, instance, service main.yml
-# Setup JUST boxes and services: ansible-playbook -i <inventory> --tags instance, service main.yml
+# Setup ENTIRE infra:             ansible-playbook -i <inventory> --tags router,instance,service main.yml
+# Setup JUST boxes and services: ansible-playbook -i <inventory> --tags instance,service main.yml
 # Setup JUST services:           ansible-playbook -i <inventory> --tags service main.yml

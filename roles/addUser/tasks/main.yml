@@ -10,6 +10,7 @@
       password: "{{ domUserPass }}"
       state: present
       groups:
+        - Users
         - Domain Users    
     ignore_errors: true
     loop:
@@ -36,6 +37,7 @@
       password: "{{ domAdminPass }}"
       state: present
       groups:
+        - Users
         - Domain Users
         - Domain Admins
     loop:

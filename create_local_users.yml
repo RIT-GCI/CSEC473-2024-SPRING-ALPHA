@@ -5,7 +5,7 @@
 # Copied and edited Schuyler's script 
 # Calls a roll to add local users to windows boxes
   - name: Gathering local DC information
-    hosts: bwindows
+    hosts: clients
     gather_facts: no
     tasks:
     
@@ -13,5 +13,5 @@
       include_role: 
         name: addLocalUsers
       vars:
-        unpriv_users_file: roles/addLocalUsers/files/unpriv_users_dev
+        unpriv_users_file: roles/addLocalUsers/files/unpriv_users
     # vars also can be rm, done for debugging

@@ -23,8 +23,8 @@ image=UbuntuJammy2204-Desktop
 [bwindows]
 Party ansible_ssh_host=192.168.1.15 image=WinSrv2022-20348-2022 flavor=large
 Crowd ansible_ssh_host=192.168.1.16 image=WinSrv2022-20348-2022 flavor=large
-Music ansible_ssh_host=192.168.1.17 image=Win10-1507_x32
-Harmony ansible_ssh_host=192.168.1.18 image=WinXP-SP0
+Music ansible_ssh_host=192.168.1.17 image=Win10-21H2
+Harmony ansible_ssh_host=192.168.1.18 image=Win10-21H2
 
 [bwindows:vars]
 # Required
@@ -35,6 +35,13 @@ ansible_password=ansible
 ansible_connection=winrm
 ansible_winrm_server_cert_validation=ignore
 windows=true
+
+[bwindows:children]
+clients
+
+[clients]
+Music
+Harmony
 
 # Router
 # Energy ansible_ssh_host=192.168.1.19 image=PFsense-2.6.0-Cloudinit
