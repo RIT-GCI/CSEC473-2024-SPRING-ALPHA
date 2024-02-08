@@ -1,0 +1,8 @@
+---
+# vars file for addLocalUsers
+default_user_password: "changeme"
+default_admin_password: "changeme"
+
+# Path to list of users, can override path if given
+priv_users: "{{ priv_users_file | default( '../files/priv_users') }}"
+unpriv_users: "{{ unpriv_users_file | default( '../files/unpriv_users') }}"

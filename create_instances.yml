@@ -1,0 +1,20 @@
+---
+- name: Create Openstack Instances
+  gather_facts: no
+  hosts: localhost 
+  tasks:
+
+    - name: Create SSH Keys in OpenStack
+      include_role:
+        name: create_ssh_key
+      vars:
+        ssh_key_name: "{{ hostvars[inventory_hostname].ssh_key }}"
+      run_once: true
+  
+
+    - name: Create Instances
+      include_role:
+        name: create_instance
+      vars:
+        box: "{{ hostvars[item] }}"
+      with_items: "{{ hostvars }}"

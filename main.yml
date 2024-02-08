@@ -1,0 +1,65 @@
+---
+# Main Playbook draft
+- name: Authenticate Ansible Host
+  gather_facts: no
+  hosts: localhost
+  tags: always
+  tasks:
+
+    - block:
+        - name: Run Test OpenStack Command
+          shell: "openstack server list"
+
+        - debug:
+            msg: "Ansible Host is authenticated!"
+
+      rescue:
+
+        - fail:
+            msg: "Ansible Host is not authenticated! 
+              Please run the openstack rc script and try again"
+
+# Maybe skip?
+#- name: Create Router
+#  tags: router
+#  import_playbook: router.yml
+
+# Will need to get network id somehow if previous is done
+- name: Create OpenStack Instances
+  tags: instance
+  import_playbook: create_instances.yml
+
+- name: pause
+  hosts: localhost
+  tags: instance
+  tasks:
+    - name: pause for 3 min
+      pause:
+        minutes: 3
+# Copy playbook / roles into infra dir
+# Each playbook file can decide how to interact w/ hosts and how to set thingup
+# Just need to make sure each playbook uses vars in the host file
+- name: Active Directory Service 1
+  tags: service
+  import_playbook: new_domain_controller.yml
+
+    #- name: add AD Users
+    #tags: users
+    #import_playbook: create_users.yml 
+
+- name: add Local Windows Users
+  tags: users
+  import_playbook: create_local_users.yml
+# EXAMPLE
+#- name: Setup Service 0
+#  tags: service
+#  import_playbook: [service playbook file]
+# ....
+#- name: Setup Service N
+#  tags: service
+#  import_playbook: [service playbook file]
+
+# tags allow for certain tasks to be run ie
+# Setup ENTIRE infra:             ansible-playbook -i <inventory> --tags router, instance, service main.yml
+# Setup JUST boxes and services: ansible-playbook -i <inventory> --tags instance, service main.yml
+# Setup JUST services:           ansible-playbook -i <inventory> --tags service main.yml
