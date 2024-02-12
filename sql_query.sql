@@ -8,6 +8,7 @@ CREATE USER IF NOT EXISTS 'SweetCaroline'@'localhost' IDENTIFIED BY 'password1';
 -- GRanting permissions for the users (Test Users. Need to change)
 GRANT ALL PRIVILEGES ON *.* TO 'FreeBird'@'localhost';
 GRANT ALL PRIVILEGES ON *.* TO 'CountryRoads'@'localhost';
+GRANT ALL PRIVILEGES ON *.* TO 'SweetCaroline'@'localhost';
 GRANT ALL PRIVILEGES ON *.* TO 'GrayScoring'@'localhost';
 
 -- Table for Songs

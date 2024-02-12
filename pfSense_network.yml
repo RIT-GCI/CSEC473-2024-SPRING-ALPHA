@@ -101,7 +101,7 @@
         --nic net-id={{ network1_id }},v4-fixed-ip="192.168.1.254"
         --nic net-id={{ network2_id }},v4-fixed-ip="192.168.2.254"
         --nic net-id={{ network3_id }},v4-fixed-ip="192.168.3.254"
-        --key-name Ansible-Key
+        --key-name Infra-Key
         pfSense
       ignore_errors: yes
   
@@ -118,7 +118,7 @@
         --image  UbuntuJammy2204-Desktop
         --boot-from-volume 100
         --nic net-id={{ network1_id }},v4-fixed-ip="192.168.1.9" 
-        --key-name Ansible-Key
+        --key-name Infra-Key
         net1_box
       ignore_errors: yes # will continue running if any of the deployments fail 
     
@@ -129,7 +129,7 @@
         --image  UbuntuJammy2204-Desktop
         --boot-from-volume 100
         --nic net-id={{ network2_id }},v4-fixed-ip="192.168.2.9" 
-        --key-name Ansible-Key
+        --key-name Infra-Key
         net2_box
       ignore_errors: yes # will continue running if any of the deployments fail 
 
@@ -140,7 +140,7 @@
         --image  UbuntuJammy2204-Desktop
         --boot-from-volume 100
         --nic net-id={{ network3_id }},v4-fixed-ip="192.168.3.9" 
-        --key-name Ansible-Key
+        --key-name Infra-Key
         net3_box
       ignore_errors: yes # will continue running if any of the deployments fail 
 
@@ -200,7 +200,7 @@
 
     - name: pause for 30 seconds #gives all the machines time to fully spin up before we begin configurating them 
       pause: 
-        seconds: 30
+        seconds: 60
 
 
 #play 6: change default routes on all hosts to be x.x.x.254 to allow routing through pfSense
