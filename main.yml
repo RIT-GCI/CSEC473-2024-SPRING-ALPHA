@@ -48,13 +48,16 @@
   import_playbook: create_users.yml 
 
 - name: add Local Windows Users
-  tags: smb
+  tags: service
   import_playbook: create_local_users.yml
 
 - name: Smb Creation
-  tags: smb 
+  tags: service 
   import_playbook: deploy_smb.yml
 
+- name: Install SQL
+  tags: sql
+  import_playbook: installsql.yml
 # EXAMPLE
 #- name: Setup Service 0
 #  tags: service
