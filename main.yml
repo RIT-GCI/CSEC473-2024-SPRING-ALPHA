@@ -40,7 +40,7 @@
 # Each playbook file can decide how to interact w/ hosts and how to set thingup
 # Just need to make sure each playbook uses vars in the host file
 - name: Active Directory Service 1
-  tags: service
+  tags: ad 
   import_playbook: new_domain_controller.yml
 
 - name: add AD Users
@@ -58,6 +58,10 @@
 - name: Install SQL
   tags: sql
   import_playbook: installsql.yml
+
+- name: Install FTP
+  tags: ftp 
+  import_playbook: install_vsftpd.yml
 # EXAMPLE
 #- name: Setup Service 0
 #  tags: service

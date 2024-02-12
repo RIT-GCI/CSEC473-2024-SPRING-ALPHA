@@ -5,7 +5,7 @@
   vars:
     mysql_root_password: root
     mysql_db_name: karoake
-    mysql_db_user: SweetCaroline # Change this 
+    mysql_db_user: GrayScoring # Change this 
     mysql_db_password: password1 # And this
     sql_query: sql_query.sql # This is to query against the karoake database. Keep this place in the 
     # same directory as the script.

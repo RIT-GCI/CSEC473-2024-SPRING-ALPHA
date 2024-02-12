@@ -2,7 +2,7 @@
 
 CREATE USER IF NOT EXISTS 'FreeBird'@'localhost' IDENTIFIED BY 'password1';
 CREATE USER IF NOT EXISTS 'CountryRoads'@'localhost' IDENTIFIED BY 'password1';
-CREATE USER IF NOT EXISTS 'grayscoring'@'localhost' IDENTIFIED BY 'password1';
+CREATE USER IF NOT EXISTS 'SweetCaroline'@'localhost' IDENTIFIED BY 'password1';
 -- Add more users as needed Change the users and passwords when going into production
 
 -- GRanting permissions for the users (Test Users. Need to change)
