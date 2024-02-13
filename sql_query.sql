@@ -27,6 +27,12 @@ CREATE TABLE IF NOT EXISTS Tabs (
     Amount INT
 );
 
+--Table for Website Credentials 
+CREATE TABLE IF NOT EXISTS Credentials ( 
+	Username NVARCHAR(255), 
+	Password NVARCHAR(255)
+); 
+
 -- Additional tables can go below, unsure of what else. 
 
 
