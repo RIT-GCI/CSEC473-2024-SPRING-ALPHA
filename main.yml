@@ -39,8 +39,12 @@
 # Copy playbook / roles into infra dir
 # Each playbook file can decide how to interact w/ hosts and how to set thingup
 # Just need to make sure each playbook uses vars in the host file
+- name: updateDNS for all Hosts
+  tags: service 
+  import_playbook: updateDNS.yml
+
 - name: Active Directory Service 1
-  tags: ad 
+  tags: service
   import_playbook: new_domain_controller.yml
 
 - name: add AD Users
@@ -60,11 +64,11 @@
   import_playbook: installsql.yml
 
 - name: Install FTP
-  tags: ftp 
-  import_playbook: install_vsftpd.yml
+  tags: service
+  import_playbook: install_ftp.yml
 
 - name: Install HTTP
-  tags: http
+  tags: service
   import_playbook: webserver_setup.yml
 
 # EXAMPLE
