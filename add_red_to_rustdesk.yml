@@ -1,0 +1,34 @@
+---
+- name: Add blue team boxes to rustdesk network
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+    - name: Extract red server names to output.txt
+      shell: "openstack server list --long | grep arn_net2 | awk '{print $4}' > output.txt"
+
+    - name: Remove unwanted server names from output.txt
+      shell: "grep -v -e 'pfSense' -e 'Gray-Infra1' output.txt > filtered_output.txt"
+
+    - name: Read server names from file
+      slurp:
+        src: filtered_output.txt
+      register: servers_file_content
+
+    - name: Extract server names
+      set_fact:
+        server_names: "{{ servers_file_content.content | b64decode | string | regex_replace('\n+$', '') | regex_replace('\n', ',') }}"
+
+    - name: Add servers to rustdesk network
+      command: "openstack server add network {{ item }} 598647b2-e42f-44ba-8999-3f0af654f6ad"
+      with_items: "{{ server_names.split(',') }}"
+
+
+- name: Run dhclient on red team linux hosts
+  hosts: rlinux
+  become: yes
+
+  tasks:
+    - name: Run dhclient
+      command: dhclient
+

@@ -1,0 +1,14 @@
+---
+- name: Update hosts and install dependencies
+  hosts: linux # change to linux host from inventory file
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+    - name: Install Git Package
+      become: true
+      apt:
+        name: git
+        state: latest
+        update_cache: yes

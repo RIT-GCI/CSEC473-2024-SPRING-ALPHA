@@ -4,7 +4,7 @@
 # Create SMB share locations, create SMB shares, and put in appropriate files from smb_files directory
 ---
 - name: Deploy SMB for Windows
-  hosts: Music
+  hosts: Harmony
 
   tasks:
     # Add directory location if it does not already exist
@@ -23,7 +23,7 @@
         description: "Cool file share!"
         path: "C:\\share\\{{ item }}"
         list: true
-        full: gray_scoring,rockstar,melody
+        full: GrayScoring,rockstar,melody
         read: disco_queen,microphone,singer,speaker,soprano,songwriter
       loop:
         - lyrics

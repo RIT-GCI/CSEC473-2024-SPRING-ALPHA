@@ -7,7 +7,6 @@ blinux
 bwindows
 
 [blue:vars]
-network_id=6274594c-2830-45da-8a11-b99cdf731a00
 
 [linux:children]
 blinux
@@ -67,7 +66,6 @@ rwindows
 rlinux
 
 [red:vars]
-network_id=b7f55bab-fc86-44d5-be0a-4d20e07253c0
 
 [rlinux]
 Pop ansible_ssh_host=192.168.2.10
@@ -109,7 +107,6 @@ gray-scoring ansible_ssh_host=192.168.1.11 flavor=large
 gwindows
 
 [gray:vars]
-network_id=263f1a94-7625-4224-b0d6-3cbc290a1415
 image=UbuntuJammy2204-Desktop
 
 [gwindows]

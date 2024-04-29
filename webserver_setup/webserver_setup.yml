@@ -1,7 +1,7 @@
 ---
 - name: Configure a linux machine into a webserver
 # Change host depending on who you want to configure
-  hosts: Melody 
+  hosts: http
   vars_files:
     - default.yml
 

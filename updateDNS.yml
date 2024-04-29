@@ -1,38 +1,10 @@
 ---
-- name: Create new Active-Directory Domain & Forest
-  hosts: all
-  vars:
-    dns_servers:
-      - party
-      - 8.8.8.8
-  become: yes
-
-  gather_facts: yes
-  tasks:
-    - name: Add DNS servers
-      community.general.ini_file:
-        path: /etc/systemd/resolved.conf
-        section: Resolve
-        option: DNS
-        value: '{{ dns_servers[0] }}'
-        mode: '0644'
-        no_extra_spaces: true
-      register: conf_dns
-      when: dns_servers | length > 0
-    - name: Add DNS fallback server
-      community.general.ini_file:
-        path: /etc/systemd/resolved.conf
-        section: Resolve
-        option: FallbackDNS
-        value: '{{ dns_servers[1] }}'
-        mode: '0644'
-        no_extra_spaces: true
-      register: conf_fallbackdns
-      when: dns_servers | length > 1
-    - name: Reload systemd-resolved    
-      ansible.builtin.systemd:
-        name: systemd-resolved
-        state: restarted
-      when:
-        - conf_dns is changed or
-          conf_fallbackdns is changed 
+- name: "Setting dns nameservers and resolv domains"
+  hosts: "all"
+  roles:
+    - role: "change_dns"
+      resolv_nameservers:
+        - "192.168.3.15"
+        - "192.168.3.16"
+        - "8.8.8.8"
+      resolv_domain: "melody.mayhem"

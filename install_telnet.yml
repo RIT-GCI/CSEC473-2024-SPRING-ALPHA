@@ -5,7 +5,7 @@
 --- 
 
 - name: Install telnet service on linux
-  hosts: linux # MAKE SURE TO CHANGE THIS 
+  hosts: Rhythm # MAKE SURE TO CHANGE THIS 
   become: yes 
 
   tasks: 

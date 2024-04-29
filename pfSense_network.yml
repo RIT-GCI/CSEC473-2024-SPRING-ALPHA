@@ -89,8 +89,12 @@
 #Play 3: Deploy pfSense Router
 - name: Deploy pfSense
   hosts: localhost
+  tags: pfSense
+  vars: 
+    network1_id: 263f1a94-7625-4224-b0d6-3cbc290a1415
+    network2_id: b7f55bab-fc86-44d5-be0a-4d20e07253c0
+    network3_id: 6274594c-2830-45da-8a11-b99cdf731a00
   gather_facts: no
-
   tasks: #CHANGE TO MATCH YOUR INFRASTRUCTURE (image, key, etc)
     - name: Create pfSense instance 
       command: >
@@ -101,59 +105,60 @@
         --nic net-id={{ network1_id }},v4-fixed-ip="192.168.1.254"
         --nic net-id={{ network2_id }},v4-fixed-ip="192.168.2.254"
         --nic net-id={{ network3_id }},v4-fixed-ip="192.168.3.254"
-        --key-name Infra-Key
+        --key-name AlphaTeamKey
         pfSense
       ignore_errors: yes
   
 #Play 4: deploy test machines
-- name: deploy test instances on each network
-  hosts: localhost
-  gather_facts: no
-
-  tasks:
-    - name: Create box 1 on net 1 #CHANGE TO MATCH YOUR INFRASTRUCTURE (image, key, etc)
-      command: >
-        openstack server create
-        --flavor small
-        --image  UbuntuJammy2204-Desktop
-        --boot-from-volume 100
-        --nic net-id={{ network1_id }},v4-fixed-ip="192.168.1.9" 
-        --key-name Infra-Key
-        net1_box
-      ignore_errors: yes # will continue running if any of the deployments fail 
-    
-    - name: Create box 2 on net 2 #CHANGE TO MATCH YOUR INFRASTRUCTURE (image, key, etc)
-      command: >
-        openstack server create
-        --flavor small
-        --image  UbuntuJammy2204-Desktop
-        --boot-from-volume 100
-        --nic net-id={{ network2_id }},v4-fixed-ip="192.168.2.9" 
-        --key-name Infra-Key
-        net2_box
-      ignore_errors: yes # will continue running if any of the deployments fail 
-
-    - name: Create box 3 on net 3 #CHANGE TO MATCH YOUR INFRASTRUCTURE (image, key, etc)
-      command: >
-        openstack server create
-        --flavor small
-        --image  UbuntuJammy2204-Desktop
-        --boot-from-volume 100
-        --nic net-id={{ network3_id }},v4-fixed-ip="192.168.3.9" 
-        --key-name Infra-Key
-        net3_box
-      ignore_errors: yes # will continue running if any of the deployments fail 
+#- name: deploy test instances on each network
+#  hosts: localhost
+#  gather_facts: no
+#
+#  tasks:
+#    - name: Create box 1 on net 1 #CHANGE TO MATCH YOUR INFRASTRUCTURE (image, key, etc)
+#      command: >
+#        openstack server create
+#        --flavor small
+#        --image  UbuntuJammy2204-Desktop
+#        --boot-from-volume 100
+#        --nic net-id={{ network1_id }},v4-fixed-ip="192.168.1.9" 
+#        --key-name AlphaTeamKey
+#        net1_box
+#      ignore_errors: yes # will continue running if any of the deployments fail 
+#    
+#    - name: Create box 2 on net 2 #CHANGE TO MATCH YOUR INFRASTRUCTURE (image, key, etc)
+#      command: >
+#        openstack server create
+#        --flavor small
+#        --image  UbuntuJammy2204-Desktop
+#        --boot-from-volume 100
+#        --nic net-id={{ network2_id }},v4-fixed-ip="192.168.2.9" 
+#        --key-name AlphaTeamKey
+#        net2_box
+#      ignore_errors: yes # will continue running if any of the deployments fail 
+#
+#    - name: Create box 3 on net 3 #CHANGE TO MATCH YOUR INFRASTRUCTURE (image, key, etc)
+#      command: >
+#        openstack server create
+#        --flavor small
+#        --image  UbuntuJammy2204-Desktop
+#        --boot-from-volume 100
+#        --nic net-id={{ network3_id }},v4-fixed-ip="192.168.3.9" 
+#        --key-name AlphaTeamKey
+#        net3_box
+#      ignore_errors: yes # will continue running if any of the deployments fail 
 
 
 
 #Play 5: configure deploy box to talk to machines
 - name: Configure Deploy Box
   hosts: localhost
+  tags: connect
   gather_facts: no
   ignore_errors: yes
 
   vars:
-    Deploy_Box_ID : "9ea43497-c9b1-4686-8da8-01d711379842" #CHANGE TO MATCH INSTANCE ID
+    Deploy_Box_ID : "7a4af2e4-cf08-4186-b39a-6b7ec9e8ac93" #CHANGE TO MATCH INSTANCE ID
 
   tasks:
     - name: Create port for net 1
@@ -180,6 +185,10 @@
       set_fact:
         port2_id: "{{ (port2_creation_result.stdout | from_json).id }}"
 
+    - name: pause for 30 seconds
+      pause: 
+        seconds: 30
+
     - name: Attach port2 for net 2
       ansible.builtin.shell:
         cmd: "openstack server add port {{ Deploy_Box_ID }} {{ port2_id }}"  
@@ -198,54 +207,55 @@
       ansible.builtin.shell:
         cmd: "openstack server add port {{ Deploy_Box_ID }} {{ port3_id }}"  
 
-    - name: pause for 30 seconds #gives all the machines time to fully spin up before we begin configurating them 
+    - name: pause for 60 seconds #gives all the machines time to fully spin up before we begin configurating them 
       pause: 
         seconds: 60
 
 
 #play 6: change default routes on all hosts to be x.x.x.254 to allow routing through pfSense
-- name: set default gateway to x.x.x.254
-  hosts: all
-  gather_facts: yes
-  become: true
-
-  tasks:
-    - name: set net1_box
-      ansible.builtin.shell:
-        cmd: "ip route add default via 192.168.1.254"
-      when: "'192.168.1.9' in inventory_hostname"
-
-    - name: set net2 box
-      ansible.builtin.shell:
-        cmd: "ip route add default via 192.168.2.254"
-      when: "'192.168.2.9' in inventory_hostname"
-
-    - name: set net3 box
-      ansible.builtin.shell:
-        cmd: "ip route add default via 192.168.3.254"
-      when: "'192.168.3.9' in inventory_hostname"
-
+#- name: set default gateway to x.x.x.254
+#  hosts: gray
+#  gather_facts: yes
+#  become: true
+#
+#  tasks:
+#    - name: set net 1
+#      ansible.builtin.shell:
+#        cmd: "ip route add 192.168.1.0/24 via 192.168.1.254"
+#
+#    - name: set net2 box
+#      ansible.builtin.shell:
+#        cmd: "ip route add 192.168.2.0/24 via 192.168.2.254"
+#    
+#    - name: set net3 box
+#      ansible.builtin.shell:
+#        cmd: "ip route add 192.168.3.0/24 via 192.168.3.254"
+#
 #play 7: clean up deployment box, remove ports to main networks
-
-- name:  clean up deployment box and connect it to the router 
-  hosts: localhost
-  gather_facts: no
-  vars:
-    Deploy_Box_ID : "9ea43497-c9b1-4686-8da8-01d711379842" #CHANGE TO MATCH YOUR INSTANCE ID
-
-  tasks:
-
-    - name: Delete net1 port from openstack
-      ansible.builtin.shell:
-        cmd: "openstack port delete {{ port1_id }}"
-
-    - name: Delete net2 port from openstack
-      ansible.builtin.shell:
-        cmd: "openstack port delete {{ port2_id }}"
-
-    - name: Delete net3 port from openstack
-      ansible.builtin.shell:
-        cmd: "openstack port delete {{ port3_id }}"
+#commenting out to keep the gray infra 1 box on all three networks
+#- name:  clean up deployment box and connect it to the router 
+#  hosts: localhost
+#  gather_facts: no
+#  vars:
+#    Deploy_Box_ID : "7a4af2e4-cf08-4186-b39a-6b7ec9e8ac93" #CHANGE TO MATCH YOUR INSTANCE ID
+#
+#  tasks:
+#
+#    - name: Delete net1 port from openstack
+#      ansible.builtin.shell:
+#        cmd: "openstack port delete {{ port1_id }}"
+#
+#    - name: pause for 30 seconds
+#      pause: 
+#        seconds: 30
+#
+#    - name: Delete net2 port from openstack
+#      ansible.builtin.shell:
+#        cmd: "openstack port delete {{ port2_id }}"
+#
+#    - name: Delete net3 port from openstack
+#      ansible.builtin.shell:
+#        cmd: "openstack port delete {{ port3_id }}"
 
 #play 8: add internet to the network
 
@@ -254,7 +264,11 @@
   gather_facts: no
 
   tasks:
-    - name: create router 
+    - name: pause for 30 seconds
+      pause:
+        seconds: 30
+
+    - name: create router
       os_router:
         state: present
         name: "WAN_Internet_Router"
@@ -262,7 +276,53 @@
           network: "external249" #external 249 is the open internet 
         interfaces: #used to set other interfaces on the router for internal routing between the networks we just created 
           - net: "arn_net1"  # connect network one 
-            subnet: "arn_subnet1" 
+            subnet: "arn_subnet1"
+          - net: "arn_net2"
+            subnet: "arn_subnet2"
+          - net: "arn_net3"
+            subnet: "arn_subnet3"
+
+
+#play 9: remove old hosts file and copy new one
+- name: Create and copy hosts file
+  hosts: localhost
+  tasks:
+    - name: Remove existing hosts file if it exists
+      file:
+        path: ./hosts
+        state: absent
+      ignore_errors: yes
+
+    - name: Copy hosts_master to hosts
+      copy:
+        src: ./hosts_master
+        dest: ./hosts
+
+
+
+#play 10: append network ids to hosts file
+- name: Append network ids to hosts file
+  hosts: localhost
+
+  tasks:
+
+    - name: Append network 1 id to hosts file under gray vars
+      lineinfile:
+        path: "./hosts"
+        line: "network_id={{ network1_id }}"
+        insertafter: "^\\[gray:vars\\]"
+
+    - name: Append network 2 id to hosts file under red vars
+      lineinfile:
+        path: "./hosts"
+        line: "network_id={{ network2_id }}"
+        insertafter: "^\\[red:vars\\]"
+
+    - name: Append network 3 id to hosts file under blue vars
+      lineinfile:
+        path: "./hosts"
+        line: "network_id={{ network3_id }}"
+        insertafter: "^\\[blue:vars\\]"
 
 
   

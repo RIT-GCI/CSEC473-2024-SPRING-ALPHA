@@ -13,8 +13,3 @@
         name: vsftpd
         daemon_reload: true
         enabled: true
-    - name: Change Ubuntu password
-      user:
-        name: "ubuntu"
-        update_password: always
-        password: "{{ 'password' | password_hash('sha512') }}"

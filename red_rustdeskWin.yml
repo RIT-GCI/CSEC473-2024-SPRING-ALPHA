@@ -1,0 +1,23 @@
+- name: Give rustdesk access for red windows
+  hosts: rwindows
+  gather_facts: yes
+  tasks:
+    - name: Transfer the script
+      ansible.windows.win_copy:
+        src: red_rustdesk.ps1
+        dest: C:\red_rustdesk.ps1
+    - name: transfer IE disable script
+      ansible.windows.win_copy:
+        src: disable_IE.ps1
+        dest: C:\disable_IE.ps1
+    - name: disable IE and UAC
+      ansible.windows.win_powershell:
+        script: C:\disable_IE.ps1
+    - name: run rustdesk creation 
+      ansible.windows.win_powershell:
+        script: C:\red_rustdesk.ps1    
+      register: redRust
+
+    - name: rustdesk output
+      debug: 
+        msg: "{{ redRust.output }}"

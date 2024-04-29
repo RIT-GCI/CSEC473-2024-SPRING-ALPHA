@@ -1,0 +1,10 @@
+---
+- name: release and request DHCP for linux 
+  hosts: rlinux,blinux
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: reset DHCP for linux
+      ansible.builtin.command: dhclient -r
+    - name: request DHCP for linux
+      ansible.builtin.command: dhclient

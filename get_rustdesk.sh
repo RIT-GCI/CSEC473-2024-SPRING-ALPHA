@@ -1,0 +1,1 @@
+rustdesk --get-id

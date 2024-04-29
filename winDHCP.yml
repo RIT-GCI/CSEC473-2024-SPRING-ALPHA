@@ -1,0 +1,11 @@
+---
+- name: release and request DHCP for windows 
+  hosts: rwindows,bwindows
+  gather_facts: no
+  tasks:
+    - name: reset DHCP for windows
+      ansible.windows.win_powershell:
+        script: ipconfig /release
+    - name: request DHCP for windows
+      ansible.windows.win_powershell:
+        script: ipconfig /renew

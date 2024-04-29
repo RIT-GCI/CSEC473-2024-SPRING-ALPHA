@@ -1,0 +1,10 @@
+---
+- name: install ssh
+  hosts: windows
+  gather_facts: yes
+  tasks:
+    - name: install the Win32-OpenSSH service
+      win_chocolatey:
+        name: openssh
+        package_params: /SSHServerFeature
+        state: present

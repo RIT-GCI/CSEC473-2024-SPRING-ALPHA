@@ -1,15 +1,17 @@
 ---
 - name: Install MySQL and Create a Database with a Table
-  hosts: Lyrics # Gray Team Lyrics box 
+  hosts: Lyrics # change to linux host from inventory file
   become: yes
   vars:
     mysql_root_password: root
     mysql_db_name: karoake
-    mysql_db_user: GrayScoring # Change this 
-    mysql_db_password: password1 # And this
-    sql_query: sql_query.sql # This is to query against the karoake database. Keep this place in the 
+    mysql_db_user: GrayScoring # Do not change this
+    mysql_db_password: pass # Do not change this.
+    sql_query: sql_query.sql # This is to query against the karoake database. Keep this place in the
     # same directory as the script.
-    destination: /home/ubuntu/Desktop #can change this to meet nees of the database.
+    destination: /home/ubuntu/Desktop #can change this to meet need of the database. 
+    webserver_ip: 192.168.3.10 # MELODY IP ( WEB SERVER ) . NOT LYRIC IP ( DATABASE ) 
+    GrayScoring_ip: 192.168.1.11
 
   tasks:
     - name: Update apt cache
@@ -33,7 +35,6 @@
       service:
         name: mysql
         state: started
-
     - name: Secure MySQL installation
       mysql_user:
         name: root
@@ -57,8 +58,8 @@
         priv: "{{ mysql_db_name }}.*:ALL"
         login_user: root
         login_password: "{{ mysql_root_password }}"
-
-    - name: Copy over SQL Query 
+        host: "{{ GrayScoring_ip }}"
+    - name: Copy over SQL Query
       copy:
         src: "{{ sql_query }}"
         dest: "{{ destination }}"
@@ -72,3 +73,35 @@
         login_host: localhost
         login_unix_socket: /var/run/mysqld/mysqld.sock
         target: /home/ubuntu/Desktop/sql_query.sql
+    - name: Delete SQL query off machine 
+      file: 
+        path: "{{ destination }}/sqsl_query.sql"
+        state: absent
+    - name: Allow connections from webserver
+      ufw:
+        rule: allow
+        src: "{{ webserver_ip }}"
+        dest: any
+        port: 3306
+      notify: Reload UFW
+    - name: Allow connections from GrayScoring
+      ufw:
+        rule: allow
+        src: "{{ GrayScoring_ip }}"
+        dest: any
+        port: 3306
+      notify: Reload UFW
+    - name: Change Bind address
+      lineinfile: 
+        path: /etc/mysql/mysql.conf.d/mysqld.cnf 
+        regexp: '^bind-address' 
+        line: 'bind-address = 0.0.0.0'
+      notify: Restart Mysql    
+  handlers:
+    - name: Reload UFW
+      ufw:
+        state: reloaded
+    - name: Restart Mysql
+      service: 
+        name: mysql
+        state: restarted

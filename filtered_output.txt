@@ -1,0 +1,11 @@
+Metal
+Indie
+Opera
+Punk
+Folk
+Classical
+Funk
+Jazz
+Country
+Rock
+Pop

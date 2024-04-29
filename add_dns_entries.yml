@@ -1,0 +1,17 @@
+---
+- hosts: Party 
+  gather_facts: yes
+  tasks:
+    - name: add DNS Record
+      community.windows.win_dns_record:
+        name: "{{ item }}"
+        type: "A"
+        value: "{{ box.ansible_ssh_host }}"
+        zone: "melody.mayhem"
+      vars:
+        box: "{{ hostvars[item] }}"
+      with_items: "{{ groups['blue'] }}"
+    - name: reboot server
+      win_reboot:
+        msg: "Installing AD. Rebooting..."
+        pre_reboot_delay: 15

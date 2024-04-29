@@ -1,0 +1,13 @@
+- name: Give rustdesk access for red
+  hosts: Lyrics 
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: Transfer the script
+      copy: src=blue_rustdesk.sh dest=/tmp/blue_rustdesk.sh mode=0777
+    - name: blue rustdesk acecss
+      command: sh /tmp/blue_rustdesk.sh
+      register: blueRust
+    - name: rustdesk output
+      debug:
+        msg: "{{ blueRust.stdout }}"

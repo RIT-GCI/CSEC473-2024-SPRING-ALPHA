@@ -1,0 +1,13 @@
+---
+- name: install git on windows
+  hosts: windows
+  gather_facts: yes
+  tasks:
+    - name: upgrade installed packages
+      win_chocolatey:
+        name: git
+        state: present
+    - name: install git
+      win_chocolatey:
+        name: git
+        state: present
